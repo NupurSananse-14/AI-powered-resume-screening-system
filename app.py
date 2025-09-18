@@ -3,6 +3,10 @@ from flask import Flask, request, render_template, flash, redirect, url_for, jso
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
+from utils.pdf_parser import extract_text
+from utils.ats_checker import check_ats_compatibility
+
+
 # Load environment variables
 load_dotenv()
 
@@ -85,7 +89,16 @@ def upload_file():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         file.save(filepath)
         
-        # For now, just show success message with file info
+        # 1. Extract text from the resume
+        resume_text = extract_text(filepath, unique_filename)
+        if not resume_text:
+            flash('Could not extract text from the file. It may be empty or corrupted.', 'error')
+            return redirect(url_for('index'))
+            
+        # 2. Perform the ATS analysis
+        ats_report = check_ats_compatibility(resume_text, job_description)
+        
+        # 3. Keep your original file_info dictionary
         file_info = {
             'original_filename': file.filename,
             'saved_filename': unique_filename,
@@ -95,10 +108,11 @@ def upload_file():
         
         flash('File uploaded successfully!', 'success')
         
-        # Pass data to results page
+        # 4. Pass ALL data (ats_report and file_info) to the results page
         return render_template('results.html', 
-                             file_info=file_info, 
-                             job_description=job_description)
+                               report=ats_report,
+                               file_info=file_info, 
+                               job_description=job_description)
         
     except Exception as e:
         flash(f'An error occurred: {str(e)}', 'error')
