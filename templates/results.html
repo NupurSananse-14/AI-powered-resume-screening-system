@@ -40,51 +40,79 @@
             </div>
         </div>
 
-        <!-- Placeholder Results -->
+        <!-- ATS Score & Keyword Analysis -->
         <div class="row">
-            <!-- ATS Score Card -->
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
+            <!-- DYNAMIC ATS Score Card -->
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-header bg-info text-white">
                         <h5 class="mb-0">
-                            <i class="fas fa-robot me-2"></i>ATS Compatibility
+                            <i class="fas fa-robot me-2"></i>ATS Match Score
                         </h5>
                     </div>
                     <div class="card-body text-center">
-                        <div class="display-1 text-info mb-3">85%</div>
-                        <h6 class="text-muted">Compatibility Score</h6>
+                        <!-- Use the actual score from the report -->
+                        <div class="display-1 text-info mb-3">{{ report.score }}%</div>
+                        <h6 class="text-muted">Keyword Match Percentage</h6>
+                        <!-- Make the progress bar dynamic -->
                         <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar bg-info" style="width: 85%"></div>
+                            <div class="progress-bar bg-info" style="width: {{ report.score }}%"></div>
                         </div>
+                        <!-- Add dynamic keyword counts -->
                         <p class="text-muted mb-0">
-                            <small><em>*Score calculation will be implemented in next phase</em></small>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Match Score Card -->
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="mb-0">
-                            <i class="fas fa-bullseye me-2"></i>Job Match Score
-                        </h5>
-                    </div>
-                    <div class="card-body text-center">
-                        <div class="display-1 text-warning mb-3">72%</div>
-                        <h6 class="text-muted">Match Percentage</h6>
-                        <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar bg-warning" style="width: 72%"></div>
-                        </div>
-                        <p class="text-muted mb-0">
-                            <small><em>*Actual matching algorithm coming in Day 4-5</em></small>
+                            Your resume contains <strong>{{ report.matched_keyword_count }}</strong> out of <strong>{{
+                                report.jd_keyword_count }}</strong> important keywords.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
+        
+        <!-- Keyword Analysis -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-key me-2"></i>Keyword Analysis
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Matched Keywords Column -->
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <h5 class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Matched Keywords</h5>
+                        {% if report.matched_keywords %}
+                        <div>
+                            {% for keyword in report.matched_keywords %}
+                            <span
+                                class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill p-2 m-1">
+                                {{ keyword }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted">No matching keywords were found.</p>
+                        {% endif %}
+                    </div>
+        
+                    <!-- Missing Keywords Column -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>Missing Keywords</h5>
+                        {% if report.missing_keywords %}
+                        <div>
+                            {% for keyword in report.missing_keywords %}
+                            <span
+                                class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill p-2 m-1">
+                                {{ keyword }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-success">Great job! No essential keywords seem to be missing.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
         <!-- Job Description Preview -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-secondary text-white">
