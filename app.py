@@ -4,7 +4,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 
 from utils.pdf_parser import extract_text
-from utils.ats_checker import check_ats_compatibility
+from utils.ats_checker import analyze_resume
 
 
 # Load environment variables
@@ -96,7 +96,7 @@ def upload_file():
             return redirect(url_for('index'))
             
         # 2. Perform the ATS analysis
-        ats_report = check_ats_compatibility(resume_text, job_description)
+        ats_report = analyze_resume(resume_text, job_description, unique_filename)
         
         # 3. Keep your original file_info dictionary
         file_info = {

@@ -40,70 +40,112 @@
             </div>
         </div>
 
-        <!-- ATS Score & Keyword Analysis -->
-        <div class="row">
-            <!-- DYNAMIC ATS Score Card -->
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-info text-white">
-                        <h5 class="mb-0">
-                            <i class="fas fa-robot me-2"></i>ATS Match Score
-                        </h5>
-                    </div>
-                    <div class="card-body text-center">
-                        <!-- Use the actual score from the report -->
-                        <div class="display-1 text-info mb-3">{{ report.score }}%</div>
-                        <h6 class="text-muted">Keyword Match Percentage</h6>
-                        <!-- Make the progress bar dynamic -->
-                        <div class="progress mb-3" style="height: 10px;">
-                            <div class="progress-bar bg-info" style="width: {{ report.score }}%"></div>
-                        </div>
-                        <!-- Add dynamic keyword counts -->
-                        <p class="text-muted mb-0">
-                            Your resume contains <strong>{{ report.matched_keyword_count }}</strong> out of <strong>{{
-                                report.jd_keyword_count }}</strong> important keywords.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Keyword Analysis -->
+        <!-- Detailed Score Analysis -->
         <div class="card shadow-sm mb-4">
-            <div class="card-header bg-secondary text-white">
+            <div class="card-header bg-info text-white">
                 <h5 class="mb-0">
-                    <i class="fas fa-key me-2"></i>Keyword Analysis
+                    <i class="fas fa-tasks me-2"></i>Detailed Score Breakdown
                 </h5>
             </div>
             <div class="card-body">
+                <div class="text-center mb-4">
+                    <h3 class="display-4 fw-bold">Total Score:
+                        <span class="text-info">{{ report.total_score }} / 100</span>
+                    </h3>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    <!-- 1. Text Extractability -->
+                    <li class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Text Extractability</h6>
+                            <span class="text-muted fw-bold">{{ report.scores.extractability }} / 40</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ (report.scores.extractability / 40) * 100 }}%;"
+                                aria-valuenow="{{ report.scores.extractability }}" aria-valuemin="0" aria-valuemax="40">
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ report.details.extractability }}</small>
+                    </li>
+
+                    <!-- 2. Standard Formatting -->
+                    <li class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Standard Formatting</h6>
+                            <span class="text-muted fw-bold">{{ report.scores.formatting }} / 30</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ (report.scores.formatting / 30) * 100 }}%;"
+                                aria-valuenow="{{ report.scores.formatting }}" aria-valuemin="0" aria-valuemax="30">
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ report.details.formatting }}</small>
+                    </li>
+
+                    <!-- 3. Keyword Matching -->
+                    <li class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">Keyword Matching</h6>
+                            <span class="text-muted fw-bold">{{ report.scores.keywords }} / 20</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ (report.scores.keywords / 20) * 100 }}%;"
+                                aria-valuenow="{{ report.scores.keywords }}" aria-valuemin="0" aria-valuemax="20"></div>
+                        </div>
+                        <small class="text-muted">{{ report.details.keywords }}</small>
+                    </li>
+
+                    <!-- 4. File Format -->
+                    <li class="list-group-item px-0">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">File Format</h6>
+                            <span class="text-muted fw-bold">{{ report.scores.file_format }} / 10</span>
+                        </div>
+                        <div class="progress mb-2" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar"
+                                style="width: {{ (report.scores.file_format / 10) * 100 }}%;"
+                                aria-valuenow="{{ report.scores.file_format }}" aria-valuemin="0" aria-valuemax="10">
+                            </div>
+                        </div>
+                        <small class="text-muted">{{ report.details.file_format }}</small>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Keyword Analysis -->
+        <div class="card shadow-sm mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-key me-2"></i>Keyword Details</h5>
+            </div>
+            <div class="card-body">
                 <div class="row">
-                    <!-- Matched Keywords Column -->
                     <div class="col-md-6 mb-3 mb-md-0">
                         <h5 class="mb-3"><i class="fas fa-check-circle text-success me-2"></i>Matched Keywords</h5>
                         {% if report.matched_keywords %}
                         <div>
                             {% for keyword in report.matched_keywords %}
                             <span
-                                class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill p-2 m-1">
-                                {{ keyword }}
-                            </span>
+                                class="badge bg-success-subtle border border-success-subtle text-success-emphasis rounded-pill p-2 m-1">{{
+                                keyword }}</span>
                             {% endfor %}
                         </div>
                         {% else %}
                         <p class="text-muted">No matching keywords were found.</p>
                         {% endif %}
                     </div>
-        
-                    <!-- Missing Keywords Column -->
                     <div class="col-md-6">
                         <h5 class="mb-3"><i class="fas fa-times-circle text-danger me-2"></i>Missing Keywords</h5>
                         {% if report.missing_keywords %}
                         <div>
                             {% for keyword in report.missing_keywords %}
                             <span
-                                class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill p-2 m-1">
-                                {{ keyword }}
-                            </span>
+                                class="badge bg-danger-subtle border border-danger-subtle text-danger-emphasis rounded-pill p-2 m-1">{{
+                                keyword }}</span>
                             {% endfor %}
                         </div>
                         {% else %}
@@ -113,6 +155,7 @@
                 </div>
             </div>
         </div>
+
         <!-- Job Description Preview -->
         <div class="card shadow-sm mb-4">
             <div class="card-header bg-secondary text-white">
@@ -141,16 +184,6 @@
             </button>
         </div>
 
-        <!-- Coming Soon Features -->
-        <div class="alert alert-info">
-            <h6><i class="fas fa-rocket me-2"></i>Coming Soon in Next Updates:</h6>
-            <ul class="mb-0">
-                <li>Detailed ATS compatibility analysis</li>
-                <li>Keyword extraction and matching</li>
-                <li>Missing skills identification</li>
-                <li>Resume improvement suggestions</li>
-            </ul>
-        </div>
     </div>
 </div>
 {% endblock %}
